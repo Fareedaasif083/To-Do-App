@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>www.To-Do.com</title>
+    <link rel="stylesheet" href="style.css" />
+    <link rel="stylesheet" href="responsive.css" />
+  </head>
+  <body>
+    <header id="app-header" class="header">
+      <div class="header-left">
+        <button id="menu-toggle">☰</button>
+        <h1 id="app-title">My To-Do</h1>
+      </div>
+
+      <div class="header-middle">
+        <input type="text" id="search-bar" placeholder="Search tasks..." />
+        
+      </div>
+
+      <div class="header-right">
+        <button id="search-icon">🔍</button>
+        <button id="theme-toggle">Dark / Light </button>
+
+      </div>
+    </header>
+    <aside id="sidebar" class="sidebar active">
+      <button id="add-task-btn" >+ Add Task</button>
+      <nav class="manu">
+        <ul>
+          <li>
+            <a href="#" id="all-tasks"
+              > All Tasks<span class="count">0</span></a
+            >
+          </li>
+          <li>
+            <a href="#" id="today-tasks"
+              > Today<span class="count">0</span></a
+            >
+          </li>
+          <li>
+            <a href="#" id="completed-tasks"
+              > Completed<span class="count">0</span></a
+            >
+          </li>
+          <li>
+            <a href="#" id="pending-tasks"
+              > Pending<span class="count">0</span></a
+            >
+          </li>
+        </ul>
+      </nav>
+      <div class="filter-section">
+        <h3>Filter</h3>
+        <select id="filter-tasks">
+          <option value="all">All</option>
+          <option value="high">High Priority</option>
+          <option value="medium">Medium Priority</option>
+          <option value="low">Low Priority</option>
+        </select>
+      </div>
+      <div class="trash-bin">
+        <a href="#" id="trash"> 🗑️ Trash <span class="count">0</span> </a>
+      </div>
+    </aside>
+    <main id="main-content" class="main-content">
+      <!-- Section Header -->
+      <header class="main-header">
+        <h2 id="section-title">All Task</h2>
+        <button id="add-task-main">+ Add Task</button>
+        
+      </header>
+
+      <p class="no-task" id="no-task-msg">There is no task added yet</p>
+      <div id="tasks-list" class="tasks-list"></div>
+      
+    </main>
+    <script src="script.js"></script>
+  </body>
+</html>

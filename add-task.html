@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>www.To-Do.com</title>
+    <link rel="stylesheet" href="style.css" />
+    <link rel="stylesheet" href="responsive.css" />
+  </head>
+  <body>
+    <header id="app-header" class="header">
+      <div class="header-left">
+        <button id="menu-toggle">☰</button>
+        <h1 id="app-title">My To-Do</h1>
+      </div>
+
+      <div class="header-middle">
+        <input type="text" id="search-bar" placeholder="Search tasks..." />
+      </div>
+
+      <div class="header-right">
+        <button id="theme-toggle">Dark / Light</button>
+      </div>
+    </header>
+    <div class="form-container">
+      <h2>Add New Task</h2>
+
+      <form id="add-task-form">
+        <div class="form-row">
+          <label for="title"
+            >Title <small style="color: #888">(required)</small></label
+          >
+          <input id="title" name="title" type="text" required />
+        </div>
+
+        <div class="form-row">
+          <label for="description">Description</label>
+          <textarea id="description" name="description"></textarea>
+        </div>
+
+        <div class="form-row" style="display: flex; gap: 10px">
+          <div style="flex: 1">
+            <label for="dueDate">Due date</label>
+            <div class="date-options">
+              <button type="button" id="todayBtn">Today</button>
+              <button type="button" id="tomorrowBtn">Tomorrow</button>
+              <input id="dueDate" name="dueDate" type="date" />
+            </div>
+          </div>
+          <div style="width: 160px">
+            <label for="priority">Priority</label>
+            <select id="priority" name="priority">
+              <option value="low">Low</option>
+              <option value="medium" selected>Medium</option>
+              <option value="high">High</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="form-actions">
+          <button class="btn-primary" type="submit">Save Task</button>
+          <button type="button" id="cancel-btn" class="btn-secondary">
+            Cancel
+          </button>
+        </div>
+      </form>
+    </div>
+    <script src="add-task.js"></script>
+  </body>
+</html>
