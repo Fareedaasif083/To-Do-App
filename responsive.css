@@ -1,0 +1,90 @@
+/* Responsive Adjustments */
+@media (max-width: 768px) {
+  #search-bar {
+    width: 80%;
+  }
+
+  #app-title {
+    font-size: 1.1rem;
+  }
+}
+
+
+/* Mobile view */
+@media (max-width: 500px) {
+  .header-middle {
+    width: 100%;
+  }
+
+  #search-bar {
+    display: none;
+    width: 90%;
+    margin: 0.5rem auto;
+    padding: 0.4rem;
+    border: 1px solid #ccc;
+    border-radius: 8px;
+  }
+
+  #search-bar.active {
+    display: block;
+  }
+
+  #search-icon{
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+  }
+}
+
+
+
+/* --- Responsive Styles for Small Screens --- */
+@media (max-width: 500px) {
+  /* Sidebar smaller */
+  .sidebar {
+    width: 160px;       /* shrink width */
+    left: -170px;       /* hidden default */
+  }
+  .sidebar.active {
+    left: 0;
+  }
+
+  /* Main content adjusts */
+  .main-content {
+    margin-left: 160px; /* same as sidebar */
+    padding: 12px;
+  }
+  .main-content.expanded {
+    margin-left: 0;
+  }
+
+  /* Header compact */
+  .header {
+    flex-direction: row;
+    justify-content: space-between;
+    padding: 0.6rem 0.8rem;
+  }
+
+  #app-title {
+    font-size: 1.1rem;  /* smaller title */
+  }
+}
+
+
+/* --- Mobile (≤500px) --- */
+@media (max-width: 300px) {
+  .main-header {
+    flex-direction: column;   /* Stack vertically */
+    align-items: flex-start;  /* Align to left */
+    gap: 8px;
+  }
+
+  #add-task-main {
+    order: -1;   /* Move button above heading */
+    width: 50%; /* Optional: make it full width on mobile */
+  }
+
+  .main-header h2 {
+    font-size: 1.2rem;
+  }
+}
