@@ -44,11 +44,11 @@ const tasksList = document.getElementById("tasks-list");
 const noTaskMsg = document.getElementById("no-task-msg");
 
 // Sidebar filters
-const allTasksBtn = document.getElementById("all-tasks");
-const todayTasksBtn = document.getElementById("today-tasks");
-const completedTasksBtn = document.getElementById("completed-tasks");
-const pendingTasksBtn = document.getElementById("pending-tasks");
-const trashBtn = document.getElementById("trash");
+const allTasks= document.getElementById("all-tasks");
+const todayTasks = document.getElementById("today-tasks");
+const completedTasks = document.getElementById("completed-tasks");
+const pendingTasks = document.getElementById("pending-tasks");
+const trashbin = document.getElementById("trash");
 
 const filterSelect = document.getElementById("filter-tasks");
 // const searchBar = document.getElementById("search-bar");
@@ -58,7 +58,7 @@ const sectionTitle = document.getElementById("section-title");
 let currentFilter = "all";
 
 // --- Load tasks with filter + search + priority ---
-function loadTasks(filter = currentFilter) {
+function tasksLoading(filter = currentFilter) {
   currentFilter = filter;
 
   let tasks = JSON.parse(localStorage.getItem("tasks")) || [];
@@ -90,12 +90,12 @@ function loadTasks(filter = currentFilter) {
   }
 
   // Apply search filter
-  const query = searchBar.value.toLowerCase();
-  if (query) {
+  const search = searchBar.value.toLowerCase();
+  if (search) {
     filteredTasks = filteredTasks.filter(
       t =>
-        (t.title && t.title.toLowerCase().includes(query)) ||
-        (t.description && t.description.toLowerCase().includes(query))
+        (t.title && t.title.toLowerCase().includes(search)) ||
+        (t.description && t.description.toLowerCase().includes(search))
     );
   }
 
@@ -157,13 +157,25 @@ function loadTasks(filter = currentFilter) {
     document.addEventListener("click", () => dropdown.classList.add("hidden"));
 
     if (filter !== "trash") {
-      dropdown.querySelector(".delete-btn").addEventListener("click", () => deleteTask(task.id));
-      dropdown.querySelector(".edit-btn").addEventListener("click", () => renameTask(task.id));
-      dropdown.querySelector(".complete-btn").addEventListener("click", () => toggleComplete(task.id));
-      dropdown.querySelector(".star-btn").addEventListener("click", () => toggleStar(task.id));
+      dropdown
+        .querySelector(".delete-btn")
+        .addEventListener("click", () => deleteTask(task.id));
+      dropdown
+        .querySelector(".edit-btn")
+        .addEventListener("click", () => renameTask(task.id));
+      dropdown
+        .querySelector(".complete-btn")
+        .addEventListener("click", () => toggleComplete(task.id));
+      dropdown
+        .querySelector(".star-btn")
+        .addEventListener("click", () => toggleStar(task.id));
     } else {
-      dropdown.querySelector(".restore-btn").addEventListener("click", () => restoreTask(task.id));
-      dropdown.querySelector(".permanent-delete-btn").addEventListener("click", () => permanentDelete(task.id));
+      dropdown
+        .querySelector(".restore-btn")
+        .addEventListener("click", () => restoreTask(task.id));
+      dropdown
+        .querySelector(".permanent-delete-btn")
+        .addEventListener("click", () => permanentDelete(task.id));
     }
 
     tasksList.appendChild(div);
@@ -173,20 +185,19 @@ function loadTasks(filter = currentFilter) {
 }
 
 // --- Task Actions ---
-function deleteTask(id) {
-  let tasks = JSON.parse(localStorage.getItem("tasks")) || [];
+function deleteTask(id){
+  let tasks= JSON.parse(localStorage.getItem("tasks")) || []; //get all tasks
   let trash = JSON.parse(localStorage.getItem("trash")) || [];
 
-  const task = tasks.find(t => t.id === id);
-  if (task) {
-    trash.push(task);
-    tasks = tasks.filter(t => t.id !== id);
+  const task= tasks.find(t=>t.id===id);
+  if(task){
+     trash.push(task);
+     tasks=tasks.filter(t=>t.id!== id);
   }
-
   localStorage.setItem("tasks", JSON.stringify(tasks));
   localStorage.setItem("trash", JSON.stringify(trash));
 
-  loadTasks(currentFilter);
+  tasksLoading(currentFilter);
 }
 
 function restoreTask(id) {
@@ -198,18 +209,18 @@ function restoreTask(id) {
     tasks.push(task);
     trash = trash.filter(t => t.id !== id);
   }
-
+  
   localStorage.setItem("tasks", JSON.stringify(tasks));
   localStorage.setItem("trash", JSON.stringify(trash));
 
-  loadTasks("trash");
+  tasksLoading("trash");
 }
 
 function permanentDelete(id) {
   let trash = JSON.parse(localStorage.getItem("trash")) || [];
   trash = trash.filter(t => t.id !== id);
   localStorage.setItem("trash", JSON.stringify(trash));
-  loadTasks("trash");
+  tasksLoading("trash");
 }
 
 function renameTask(id) {
@@ -219,7 +230,7 @@ function renameTask(id) {
   if (newTitle) {
     task.title = newTitle.trim();
     localStorage.setItem("tasks", JSON.stringify(tasks));
-    loadTasks(currentFilter);
+    tasksLoading(currentFilter);
   }
 }
 
@@ -228,7 +239,7 @@ function toggleComplete(id) {
   const task = tasks.find(t => t.id === id);
   task.completed = !task.completed;
   localStorage.setItem("tasks", JSON.stringify(tasks));
-  loadTasks(currentFilter);
+  tasksLoading(currentFilter);
 }
 
 function toggleStar(id) {
@@ -236,7 +247,7 @@ function toggleStar(id) {
   const task = tasks.find(t => t.id === id);
   task.starred = !task.starred;
   localStorage.setItem("tasks", JSON.stringify(tasks));
-  loadTasks(currentFilter);
+  tasksLoading(currentFilter);
 }
 
 // --- Update counts ---
@@ -245,24 +256,31 @@ function updateCounts() {
   let trash = JSON.parse(localStorage.getItem("trash")) || [];
 
   document.querySelector("#all-tasks .count").textContent = tasks.length;
-  document.querySelector("#today-tasks .count").textContent = tasks.filter(t => t.dueDate === new Date().toISOString().split("T")[0]).length;
-  document.querySelector("#completed-tasks .count").textContent = tasks.filter(t => t.completed).length;
-  document.querySelector("#pending-tasks .count").textContent = tasks.filter(t => !t.completed).length;
+  document.querySelector("#today-tasks .count").textContent = tasks.filter(
+    (t) => t.dueDate === new Date().toISOString().split("T")[0]
+  ).length;
+  document.querySelector("#completed-tasks .count").textContent = tasks.filter(
+    (t) => t.completed
+  ).length;
+  document.querySelector("#pending-tasks .count").textContent = tasks.filter(
+    (t) => !t.completed
+  ).length;
   document.querySelector("#trash .count").textContent = trash.length;
 }
 
 // --- Sidebar filters ---
-allTasksBtn.addEventListener("click", () => loadTasks("all"));
-todayTasksBtn.addEventListener("click", () => loadTasks("today"));
-completedTasksBtn.addEventListener("click", () => loadTasks("completed"));
-pendingTasksBtn.addEventListener("click", () => loadTasks("pending"));
-trashBtn.addEventListener("click", () => loadTasks("trash"));
+allTasks.addEventListener("click", () => tasksLoading("all"));
+todayTasks.addEventListener("click", () => tasksLoading("today"));
+completedTasks.addEventListener("click", () => tasksLoading("completed"));
+pendingTasks.addEventListener("click", () => tasksLoading("pending"));
+trashbin.addEventListener("click", () => tasksLoading("trash"));
+
 
 // --- Filter dropdown ---
-filterSelect.addEventListener("change", () => loadTasks(currentFilter));
+filterSelect.addEventListener("change", () => tasksLoading(currentFilter));
 
 // --- Search bar ---
-searchBar.addEventListener("input", () => loadTasks(currentFilter));
+searchBar.addEventListener("input", () => tasksLoading(currentFilter));
 
 // On page load
-loadTasks("all");
+tasksLoading("all");
