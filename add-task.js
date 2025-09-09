@@ -8,7 +8,7 @@ theme.addEventListener("click",()=>{
 if (localStorage.getItem("theme") === "dark") {
   document.body.classList.add("dark-mode");
 }
-
+// form for adding task and save it 
 document.addEventListener("DOMContentLoaded", () => {
   const form = document.getElementById("add-task-form");
   const cancelBtn = document.getElementById("cancel-btn");
