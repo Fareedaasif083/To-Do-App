@@ -1,48 +1,65 @@
-const theme=document.getElementById("theme-toggle");
-theme.addEventListener("click",()=>{
+export{};
+const themeToggle=document.getElementById("theme-toggle")as HTMLButtonElement | null;
+if(themeToggle)
+themeToggle.addEventListener("click",()=>{
     document.body.classList.toggle("dark-mode");
     localStorage.setItem("theme",
         document.body.classList.contains("dark-mode")? "dark":"light"
     );
 });
-if (localStorage.getItem("theme") === "dark") {
-  document.body.classList.add("dark-mode");
+interface Task {
+  id: string
+  title: string
+  description?: string
+  dueDate?: string
+  completed: boolean
+  starred: boolean
+  priority: string
+}
+
+function getDataInput(key: string): Task[]{
+  const item=localStorage.getItem(key)
+  try{
+    return item? JSON.parse(item)as Task[] : [];
+  }
+  catch(e){
+    return [];
+  }
 }
 // form for adding task and save it 
 document.addEventListener("DOMContentLoaded", () => {
-  const form = document.getElementById("add-task-form");
-  const cancelBtn = document.getElementById("cancel-btn");
-  const todayBtn = document.getElementById("todayBtn");
-  const tomorrowBtn = document.getElementById("tomorrowBtn");
-  const dueDateInput = document.getElementById("dueDate");
+  const form = document.getElementById("add-task-form")as HTMLFormElement;
+  const cancelBtn = document.getElementById("cancel-btn")as HTMLButtonElement;
+  const todayBtn = document.getElementById("todayBtn")as HTMLButtonElement;
+  const tomorrowBtn = document.getElementById("tomorrowBtn")as HTMLButtonElement;
   //   handle task submit
-  if (form){
+    if (form){
     form.addEventListener("submit",(e)=>{
       e.preventDefault();  //stop form from its default behaviour
     
         // get form values
-        const title=document.getElementById("title").value.trim();
-        const description = document.getElementById("description").value.trim();
-        const dueDate = document.getElementById("dueDate").value;
-        const priority = document.getElementById("priority").value;
+        const title=(document.getElementById("title")as HTMLInputElement).value.trim();
+        const description = (document.getElementById("description")as HTMLInputElement).value.trim();
+        const dueDate = (document.getElementById("dueDate")as HTMLInputElement).value;
+        const priority = (document.getElementById("priority")as HTMLSelectElement).value;
 
         if(!title){
             alert("Title is required!");
             return;
         }
 
-        // Create task object
-        const task ={
-            id:Date.now(),
-            title,
-            description,
-            dueDate,
-            priority,
-            completed: false
-        };
+        const task: Task={
+          id: Date.now().toString(),
+          title,
+          description,
+          dueDate,
+          completed: false,
+          starred: false,
+          priority
+        }
         
         // Get existing tasks or empty array
-        let tasks = JSON.parse(localStorage.getItem("tasks")) || [];
+        let tasks = getDataInput("tasks")
 
         // Add new task
         tasks.push(task);
@@ -56,24 +73,25 @@ document.addEventListener("DOMContentLoaded", () => {
   }
 
   // Cancel button → go back without saving
-  if (cancelBtn) {
+   if (cancelBtn) {
     cancelBtn.addEventListener("click", () => {
       window.location.href = "index.html";
     });
   }
-
+  const dueDateInput = document.getElementById("dueDate")as HTMLInputElement;
   // Today / Tomorrow buttons
   if (todayBtn && tomorrowBtn && dueDateInput) {
-    function setActive(button) {
+    function setActive(button: HTMLButtonElement ) {
       [todayBtn, tomorrowBtn].forEach(btn => btn.classList.remove("active"));
       button.classList.add("active");
     }
-
+   if(dueDateInput){
     todayBtn.addEventListener("click", () => {
       const today = new Date();
       dueDateInput.value = today.toISOString().split("T")[0];
       setActive(todayBtn);
     });
+  
 
     tomorrowBtn.addEventListener("click", () => {
       const tomorrow = new Date();
@@ -87,6 +105,8 @@ document.addEventListener("DOMContentLoaded", () => {
     todayBtn.classList.remove("active");
     tomorrowBtn.classList.remove("active");
     });
+
+   }
 
   }
 

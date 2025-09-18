@@ -1,5 +1,5 @@
 export{};
-
+// --- Sidebar toggle ---
 const manuButton = document.getElementById("menu-toggle")as HTMLButtonElement | null;
 const sidebar = document.getElementById("sidebar")as HTMLElement | null;
 const mainContent = document.getElementById("main-content")as HTMLElement | null;
@@ -24,7 +24,7 @@ theme.addEventListener("click", () => {
 if (localStorage.getItem("theme") === "dark") {
   document.body.classList.add("dark-mode");
 }
-};
+}
 
 // --- Add task buttons ---
 const addTaskBtn =document.getElementById("add-task-btn")as HTMLElement | null;
@@ -40,12 +40,10 @@ if(addTaskMain){
 })
 };
 
-
 // --- Elements ---
 const tasksList = document.getElementById("tasks-list")as HTMLElement | null;
 const noTaskMsg = document.getElementById("no-task-msg")as HTMLElement | null;
 
-// Sidebar filters
 const allTasks = document.getElementById("all-tasks")as HTMLElement | null;
 const todayTasks = document.getElementById("today-tasks")as HTMLElement | null;
 const completedTasks = document.getElementById("completed-tasks")as HTMLElement | null;
@@ -56,8 +54,34 @@ const filterSelect = document.getElementById("filter-tasks")as HTMLSelectElement
 const sectionTitle = document.getElementById("section-title")as HTMLHeadingElement | null;
 const searchBar = document.getElementById("search-bar")as HTMLInputElement | null;
 const searchIcon = document.getElementById("search-icon")as HTMLElement | null;
+
 // Keep current filter state
 let currentFilter: string = "all";
+
+// --- Task model ---
+interface Task {
+  id: string
+  title: string
+  description?: string
+  dueDate?: string
+  completed: boolean
+  starred: boolean
+  priority: string
+}
+
+function getData(key: string): Task[]{
+  const item=localStorage.getItem(key)
+  try{
+    return item? JSON.parse(item)as Task[] : [];
+  }
+  catch{
+    return [];
+  }
+}
+
+function saveData(key: string, data: Task[]): void {
+  localStorage.setItem(key, JSON.stringify(data));
+}
 
 // --- Load tasks ---
 function tasksLoading(filter: string = currentFilter): void {
@@ -71,32 +95,35 @@ function tasksLoading(filter: string = currentFilter): void {
   if (filter === "all"&& sectionTitle) {
     filteredTasks = tasks;
     sectionTitle.textContent = "All Tasks";
-  } else if (filter === "today" && sectionTitle) {
+  } 
+  else if (filter === "today" && sectionTitle) {
     const today = new Date().toISOString().split("T")[0];
     filteredTasks = tasks.filter((t) => t.dueDate === today);
     sectionTitle.textContent = "Today's Tasks";
-  } else if (filter === "completed" && sectionTitle) {
+  } 
+  else if (filter === "completed" && sectionTitle) {
     filteredTasks = tasks.filter((t) => t.completed);
     sectionTitle.textContent = "Completed Tasks";
-  } else if (filter === "pending" && sectionTitle) {
+  } 
+  else if (filter === "pending" && sectionTitle) {
     filteredTasks = tasks.filter((t) => !t.completed);
     sectionTitle.textContent = "Pending Tasks";
-  } else if (filter === "trash" && sectionTitle) {
+  } 
+  else if (filter === "trash" && sectionTitle) {
     filteredTasks = trash;
     sectionTitle.textContent = "Trash";
   }
 
-
-  // Apply priority filter
-   if(filterSelect){
+  // Priority filter
+  if(filterSelect){
   const priorityFilter = filterSelect.value;
   if (priorityFilter !== "all" && filter !== "trash") {
     filteredTasks = filteredTasks.filter((t) => t.priority === priorityFilter);
   }
 }
 
-  // Apply search filter
-   if(searchBar){
+  // Search filter
+  if(searchBar){
   const search = searchBar.value.toLowerCase();
   if (search) {
     filteredTasks = filteredTasks.filter(
@@ -190,15 +217,16 @@ function tasksLoading(filter: string = currentFilter): void {
   updateCounts();
 }
 
+
 // --- Task Actions ---
 function deleteTask(id: string): void {
-  let tasks = JSON.parse(localStorage.getItem("tasks")) || [];
-  let trash = JSON.parse(localStorage.getItem("trash")) || [];
+  let tasks:Task[] = getData("tasks");
+  let trash:Task[] = getData("trash");
 
-  const task = tasks.find(t => t.id === id);
+  const task = tasks.find((t) => t.id === id);
   if (task) {
     trash.push(task);
-    tasks = tasks.filter(t => t.id !== id);
+    tasks = tasks.filter((t) => t.id !== id);
   }
 
   localStorage.setItem("tasks", JSON.stringify(tasks));
@@ -208,13 +236,13 @@ function deleteTask(id: string): void {
 }
 
 function restoreTask(id: string): void {
-  let tasks = JSON.parse(localStorage.getItem("tasks")) || [];
-  let trash = JSON.parse(localStorage.getItem("trash")) || [];
+  let tasks: Task[] = getData("tasks");
+  let trash: Task[] = getData("trash");
 
-  const task = trash.find(t => t.id === id);
+  const task = trash.find((t) => t.id === id);
   if (task) {
     tasks.push(task);
-    trash = trash.filter(t => t.id !== id);
+    trash = trash.filter((t) => t.id !== id);
   }
 
   localStorage.setItem("tasks", JSON.stringify(tasks));
@@ -224,34 +252,37 @@ function restoreTask(id: string): void {
 }
 
 function permanentDelete(id: string): void {
-  let trash = JSON.parse(localStorage.getItem("trash")) || [];
-  trash = trash.filter(t => t.id !== id);
+  let trash: Task[] = getData("trash")
+  trash = trash.filter((t) => t.id !== id);
   localStorage.setItem("trash", JSON.stringify(trash));
   tasksLoading("trash");
 }
 
-function renameTask(id) {
-  let tasks = JSON.parse(localStorage.getItem("tasks")) || [];
-  const task = tasks.find(t => t.id === id);
+function renameTask(id: string): void {
+  let tasks: Task[] = getData("tasks")
+  const task = tasks.find((t) => t.id === id);
+  if(!task) return
   const newTitle = prompt("Enter new title:", task.title);
   if (newTitle) {
     task.title = newTitle.trim();
     localStorage.setItem("tasks", JSON.stringify(tasks));
-    loadTasks(currentFilter);
+    tasksLoading(currentFilter);
   }
 }
 
-function toggleComplete(id: string): void {
-  let tasks = JSON.parse(localStorage.getItem("tasks")) || [];
-  const task = tasks.find(t => t.id === id);
+function toggleComplete(id: string):void {
+  let tasks: Task[] = getData("tasks")
+  const task = tasks.find((t) => t.id === id);
+  if(task)
   task.completed = !task.completed;
   localStorage.setItem("tasks", JSON.stringify(tasks));
   tasksLoading(currentFilter);
 }
 
 function toggleStar(id: string): void {
-  let tasks = JSON.parse(localStorage.getItem("tasks")) || [];
-  const task = tasks.find(t => t.id === id);
+  let tasks: Task[] =getData("tasks")
+  const task = tasks.find((t) => t.id === id);
+  if(task)
   task.starred = !task.starred;
   localStorage.setItem("tasks", JSON.stringify(tasks));
   tasksLoading(currentFilter);
@@ -259,8 +290,8 @@ function toggleStar(id: string): void {
 
 // --- Update counts ---
 function updateCounts() {
-  let tasks = JSON.parse(localStorage.getItem("tasks")) || [];
-  let trash = JSON.parse(localStorage.getItem("trash")) || [];
+  let tasks: Task[] = getData("tasks")
+  let trash: Task[] = getData("trash")
 
   const allCount=document.querySelector("#all-tasks .count")
   if(allCount) allCount.textContent = tasks.length.toString();
@@ -291,8 +322,20 @@ trashbin?.addEventListener("click", () => tasksLoading("trash"));
 // --- Filter dropdown ---
 filterSelect?.addEventListener("change", () => tasksLoading(currentFilter));
 
-// --- Search bar ---
+// --- Search bar toggle ---
+searchIcon?.addEventListener("click", () => {
+  if(searchBar){
+    searchBar.classList.toggle("active");
+      if (searchBar.classList.contains("active")) {
+       searchBar.focus();
+      }
+    }
+});
+
+// --- Search bar input ---
 searchBar?.addEventListener("input", () => tasksLoading(currentFilter));
 
-// On page load
+// --- On page load ---
 tasksLoading("all");
+
+
