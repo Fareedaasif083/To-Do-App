@@ -1,9 +1,11 @@
-const menuToggle = document.getElementById("menu-toggle")as HTMLButtonElement | null;
-const sidebar = document.querySelector(".sidebar")as HTMLElement | null;
-const mainContent = document.querySelector(".main-content")as HTMLElement | null;
+export{};
 
-if(menuToggle && sidebar && mainContent){
-menuToggle.addEventListener("click", () => {
+const manuButton = document.getElementById("menu-toggle")as HTMLButtonElement | null;
+const sidebar = document.getElementById("sidebar")as HTMLElement | null;
+const mainContent = document.getElementById("main-content")as HTMLElement | null;
+
+if(manuButton && sidebar && mainContent){
+manuButton.addEventListener("click", () => {
   sidebar.classList.toggle("active");
   mainContent.classList.toggle("expanded");
 })
@@ -22,99 +24,102 @@ theme.addEventListener("click", () => {
 if (localStorage.getItem("theme") === "dark") {
   document.body.classList.add("dark-mode");
 }
-}
+};
 
-const searchBar = document.getElementById("search-bar");
-const searchIcon = document.getElementById("search-icon");
-
-searchIcon.addEventListener("click", () => {
-  searchBar.classList.toggle("active");
-  if (searchBar.classList.contains("active")) {
-    searchBar.focus();
-  }
-});
-
-
-// Add Task buttons → go to form
-document.getElementById("add-task-btn").addEventListener("click", () => {
+// --- Add task buttons ---
+const addTaskBtn =document.getElementById("add-task-btn")as HTMLElement | null;
+if(addTaskBtn){ 
+    addTaskBtn.addEventListener("click", () => {
   window.location.href = "add-task.html";
-});
-document.getElementById("add-task-main").addEventListener("click", () => {
+})
+};
+const addTaskMain =document.getElementById("add-task-main")as HTMLElement | null;
+if(addTaskMain){ 
+    addTaskMain.addEventListener("click", () => {
   window.location.href = "add-task.html";
-});
+})
+};
+
 
 // --- Elements ---
-const tasksList = document.getElementById("tasks-list");
-const noTaskMsg = document.getElementById("no-task-msg");
+const tasksList = document.getElementById("tasks-list")as HTMLElement | null;
+const noTaskMsg = document.getElementById("no-task-msg")as HTMLElement | null;
 
 // Sidebar filters
-const allTasksBtn = document.getElementById("all-tasks");
-const todayTasksBtn = document.getElementById("today-tasks");
-const completedTasksBtn = document.getElementById("completed-tasks");
-const pendingTasksBtn = document.getElementById("pending-tasks");
-const trashBtn = document.getElementById("trash");
+const allTasks = document.getElementById("all-tasks")as HTMLElement | null;
+const todayTasks = document.getElementById("today-tasks")as HTMLElement | null;
+const completedTasks = document.getElementById("completed-tasks")as HTMLElement | null;
+const pendingTasks = document.getElementById("pending-tasks")as HTMLElement | null;
+const trashbin = document.getElementById("trash")as HTMLElement | null;
 
-const filterSelect = document.getElementById("filter-tasks");
-// const searchBar = document.getElementById("search-bar");
-const sectionTitle = document.getElementById("section-title");
-
+const filterSelect = document.getElementById("filter-tasks")as HTMLSelectElement | null;
+const sectionTitle = document.getElementById("section-title")as HTMLHeadingElement | null;
+const searchBar = document.getElementById("search-bar")as HTMLInputElement | null;
+const searchIcon = document.getElementById("search-icon")as HTMLElement | null;
 // Keep current filter state
-let currentFilter = "all";
+let currentFilter: string = "all";
 
-// --- Load tasks with filter + search + priority ---
-function loadTasks(filter = currentFilter) {
+// --- Load tasks ---
+function tasksLoading(filter: string = currentFilter): void {
   currentFilter = filter;
 
-  let tasks = JSON.parse(localStorage.getItem("tasks")) || [];
-  let trash = JSON.parse(localStorage.getItem("trash")) || [];
-  let filteredTasks = [];
+  let tasks: Task[] = getData("tasks")
+  let trash: Task[] = getData("trash")
+  let filteredTasks: Task[] = [];
 
-  if (filter === "all") {
+  // Filter selection
+  if (filter === "all"&& sectionTitle) {
     filteredTasks = tasks;
     sectionTitle.textContent = "All Tasks";
-  } else if (filter === "today") {
+  } else if (filter === "today" && sectionTitle) {
     const today = new Date().toISOString().split("T")[0];
-    filteredTasks = tasks.filter(t => t.dueDate === today);
+    filteredTasks = tasks.filter((t) => t.dueDate === today);
     sectionTitle.textContent = "Today's Tasks";
-  } else if (filter === "completed") {
-    filteredTasks = tasks.filter(t => t.completed);
+  } else if (filter === "completed" && sectionTitle) {
+    filteredTasks = tasks.filter((t) => t.completed);
     sectionTitle.textContent = "Completed Tasks";
-  } else if (filter === "pending") {
-    filteredTasks = tasks.filter(t => !t.completed);
+  } else if (filter === "pending" && sectionTitle) {
+    filteredTasks = tasks.filter((t) => !t.completed);
     sectionTitle.textContent = "Pending Tasks";
-  } else if (filter === "trash") {
+  } else if (filter === "trash" && sectionTitle) {
     filteredTasks = trash;
     sectionTitle.textContent = "Trash";
   }
 
+
   // Apply priority filter
+   if(filterSelect){
   const priorityFilter = filterSelect.value;
   if (priorityFilter !== "all" && filter !== "trash") {
-    filteredTasks = filteredTasks.filter(t => t.priority === priorityFilter);
+    filteredTasks = filteredTasks.filter((t) => t.priority === priorityFilter);
   }
+}
 
   // Apply search filter
-  const query = searchBar.value.toLowerCase();
-  if (query) {
+   if(searchBar){
+  const search = searchBar.value.toLowerCase();
+  if (search) {
     filteredTasks = filteredTasks.filter(
-      t =>
-        (t.title && t.title.toLowerCase().includes(query)) ||
-        (t.description && t.description.toLowerCase().includes(query))
+      (t) =>
+        (t.title && t.title.toLowerCase().includes(search)) ||
+        (t.description && t.description.toLowerCase().includes(search))
     );
   }
+}
 
   // Clear list
+  if(tasksList){
   tasksList.innerHTML = "";
 
-  if (filteredTasks.length === 0) {
+  if (filteredTasks.length === 0 && noTaskMsg) {
     noTaskMsg.style.display = "block";
     return;
   } else {
-    noTaskMsg.style.display = "none";
+    if(noTaskMsg)noTaskMsg.style.display = "none";
   }
 
   // Render tasks
-  filteredTasks.forEach(task => {
+  filteredTasks.forEach((task) => {
     const div = document.createElement("div");
     div.classList.add("task-item");
     div.setAttribute("data-id", task.id);
@@ -125,17 +130,21 @@ function loadTasks(filter = currentFilter) {
           ${task.title}
         </h3>
         <p>${task.description || ""}</p>
-        <small>Due: ${task.dueDate || "No date"} | Priority: ${task.priority}</small>
+        <small>Due: ${task.dueDate || "No date"} | Priority: ${
+      task.priority
+    }</small>
       </div>
       <div class="task-menu">
-        <button class="menu-btn">⋮</button>
+        <button class="menu-btn">...</button>
         <div class="menu-dropdown hidden">
           ${
             filter !== "trash"
               ? `
             <button class="star-btn">${task.starred ? "Unstar" : "Star"}</button>
             <button class="edit-btn">Rename</button>
-            <button class="complete-btn">${task.completed ? "Undo" : "Complete"}</button>
+            <button class="complete-btn">${
+              task.completed ? "Undo" : "Complete"
+            }</button>
             <button class="delete-btn">Delete</button>
           `
               : `
@@ -147,37 +156,42 @@ function loadTasks(filter = currentFilter) {
       </div>
     `;
 
-    const menuBtn = div.querySelector(".menu-btn");
-    const dropdown = div.querySelector(".menu-dropdown");
-
+    const menuBtn = div.querySelector(".menu-btn")as HTMLButtonElement | null;
+    const dropdown = div.querySelector(".menu-dropdown")as HTMLSelectElement | null;
+    
+    if(menuBtn && dropdown){
     menuBtn.addEventListener("click", (e) => {
       e.stopPropagation();
-      document.querySelectorAll(".menu-dropdown").forEach(menu => {
+      document.querySelectorAll(".menu-dropdown").forEach((menu) => {
         if (menu !== dropdown) menu.classList.add("hidden");
       });
       dropdown.classList.toggle("hidden");
     });
-
-    document.addEventListener("click", () => dropdown.classList.add("hidden"));
+    document.addEventListener("click", () =>
+      dropdown.classList.add("hidden")
+    );
 
     if (filter !== "trash") {
-      dropdown.querySelector(".delete-btn").addEventListener("click", () => deleteTask(task.id));
-      dropdown.querySelector(".edit-btn").addEventListener("click", () => renameTask(task.id));
-      dropdown.querySelector(".complete-btn").addEventListener("click", () => toggleComplete(task.id));
-      dropdown.querySelector(".star-btn").addEventListener("click", () => toggleStar(task.id));
-    } else {
-      dropdown.querySelector(".restore-btn").addEventListener("click", () => restoreTask(task.id));
-      dropdown.querySelector(".permanent-delete-btn").addEventListener("click", () => permanentDelete(task.id));
+      dropdown.querySelector(".delete-btn")?.addEventListener("click", () => deleteTask(task.id));
+      dropdown.querySelector(".edit-btn")?.addEventListener("click", () => renameTask(task.id));
+      dropdown.querySelector(".complete-btn")?.addEventListener("click", () => toggleComplete(task.id));
+      dropdown.querySelector(".star-btn")?.addEventListener("click", () => toggleStar(task.id));
+    } 
+    else {
+      dropdown.querySelector(".restore-btn")?.addEventListener("click", () => restoreTask(task.id));
+      dropdown.querySelector(".permanent-delete-btn")?.addEventListener("click", () => permanentDelete(task.id));
     }
 
+}
     tasksList.appendChild(div);
   });
+}
 
   updateCounts();
 }
 
 // --- Task Actions ---
-function deleteTask(id) {
+function deleteTask(id: string): void {
   let tasks = JSON.parse(localStorage.getItem("tasks")) || [];
   let trash = JSON.parse(localStorage.getItem("trash")) || [];
 
@@ -190,10 +204,10 @@ function deleteTask(id) {
   localStorage.setItem("tasks", JSON.stringify(tasks));
   localStorage.setItem("trash", JSON.stringify(trash));
 
-  loadTasks(currentFilter);
+  tasksLoading(currentFilter);
 }
 
-function restoreTask(id) {
+function restoreTask(id: string): void {
   let tasks = JSON.parse(localStorage.getItem("tasks")) || [];
   let trash = JSON.parse(localStorage.getItem("trash")) || [];
 
@@ -206,14 +220,14 @@ function restoreTask(id) {
   localStorage.setItem("tasks", JSON.stringify(tasks));
   localStorage.setItem("trash", JSON.stringify(trash));
 
-  loadTasks("trash");
+  tasksLoading("trash");
 }
 
-function permanentDelete(id) {
+function permanentDelete(id: string): void {
   let trash = JSON.parse(localStorage.getItem("trash")) || [];
   trash = trash.filter(t => t.id !== id);
   localStorage.setItem("trash", JSON.stringify(trash));
-  loadTasks("trash");
+  tasksLoading("trash");
 }
 
 function renameTask(id) {
@@ -227,20 +241,20 @@ function renameTask(id) {
   }
 }
 
-function toggleComplete(id) {
+function toggleComplete(id: string): void {
   let tasks = JSON.parse(localStorage.getItem("tasks")) || [];
   const task = tasks.find(t => t.id === id);
   task.completed = !task.completed;
   localStorage.setItem("tasks", JSON.stringify(tasks));
-  loadTasks(currentFilter);
+  tasksLoading(currentFilter);
 }
 
-function toggleStar(id) {
+function toggleStar(id: string): void {
   let tasks = JSON.parse(localStorage.getItem("tasks")) || [];
   const task = tasks.find(t => t.id === id);
   task.starred = !task.starred;
   localStorage.setItem("tasks", JSON.stringify(tasks));
-  loadTasks(currentFilter);
+  tasksLoading(currentFilter);
 }
 
 // --- Update counts ---
@@ -248,25 +262,37 @@ function updateCounts() {
   let tasks = JSON.parse(localStorage.getItem("tasks")) || [];
   let trash = JSON.parse(localStorage.getItem("trash")) || [];
 
-  document.querySelector("#all-tasks .count").textContent = tasks.length;
-  document.querySelector("#today-tasks .count").textContent = tasks.filter(t => t.dueDate === new Date().toISOString().split("T")[0]).length;
-  document.querySelector("#completed-tasks .count").textContent = tasks.filter(t => t.completed).length;
-  document.querySelector("#pending-tasks .count").textContent = tasks.filter(t => !t.completed).length;
-  document.querySelector("#trash .count").textContent = trash.length;
+  const allCount=document.querySelector("#all-tasks .count")
+  if(allCount) allCount.textContent = tasks.length.toString();
+
+  const todayCount=document.querySelector("#today-tasks .count")
+  if(todayCount)todayCount.textContent = tasks.filter(
+    (t) => t.dueDate === new Date().toISOString().split("T")[0]).length.toString();
+
+  const completedCount=document.querySelector("#completed-tasks .count")
+  if(completedCount)completedCount.textContent = tasks.filter(
+    (t) => t.completed).length.toString();
+
+  const pendingCount=document.querySelector("#pending-tasks .count")
+  if(pendingCount)pendingCount.textContent = tasks.filter(
+    (t) => !t.completed).length.toString();
+
+  const trashCount=document.querySelector("#trash .count")
+  if(trashCount)trashCount.textContent = trash.length.toString();
 }
 
 // --- Sidebar filters ---
-allTasksBtn.addEventListener("click", () => loadTasks("all"));
-todayTasksBtn.addEventListener("click", () => loadTasks("today"));
-completedTasksBtn.addEventListener("click", () => loadTasks("completed"));
-pendingTasksBtn.addEventListener("click", () => loadTasks("pending"));
-trashBtn.addEventListener("click", () => loadTasks("trash"));
+allTasks?.addEventListener("click", () => tasksLoading("all"));
+todayTasks?.addEventListener("click", () => tasksLoading("today"));
+completedTasks?.addEventListener("click", () => tasksLoading("completed"));
+pendingTasks?.addEventListener("click", () => tasksLoading("pending"));
+trashbin?.addEventListener("click", () => tasksLoading("trash"));
 
 // --- Filter dropdown ---
-filterSelect.addEventListener("change", () => loadTasks(currentFilter));
+filterSelect?.addEventListener("change", () => tasksLoading(currentFilter));
 
 // --- Search bar ---
-searchBar.addEventListener("input", () => loadTasks(currentFilter));
+searchBar?.addEventListener("input", () => tasksLoading(currentFilter));
 
 // On page load
-loadTasks("all");
+tasksLoading("all");
