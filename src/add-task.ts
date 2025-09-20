@@ -7,7 +7,7 @@ themeToggle.addEventListener("click",()=>{
         document.body.classList.contains("dark-mode")? "dark":"light"
     );
 });
-interface Task {
+type Task = {
   id: string
   title: string
   description?: string
