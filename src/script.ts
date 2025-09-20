@@ -59,7 +59,7 @@ const searchIcon = document.getElementById("search-icon")as HTMLElement | null;
 let currentFilter: string = "all";
 
 // --- Task model ---
-interface Task {
+type Task = {
   id: string
   title: string
   description?: string
