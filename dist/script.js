@@ -1,102 +1,131 @@
-"use strict";
-const menuToggle = document.getElementById("menu-toggle");
-const sidebar = document.querySelector(".sidebar");
-const mainContent = document.querySelector(".main-content");
-menuToggle.addEventListener("click", () => {
-    sidebar.classList.toggle("active");
-    mainContent.classList.toggle("expanded");
-});
-// --- Theme toggle ---
-const themeToggle = document.getElementById("theme-toggle");
-themeToggle.addEventListener("click", () => {
-    document.body.classList.toggle("dark-mode");
-    localStorage.setItem("theme", document.body.classList.contains("dark-mode") ? "dark" : "light");
-});
-if (localStorage.getItem("theme") === "dark") {
-    document.body.classList.add("dark-mode");
+// --- Sidebar toggle ---
+const manuButton = document.getElementById("menu-toggle");
+const sidebar = document.getElementById("sidebar");
+const mainContent = document.getElementById("main-content");
+if (manuButton && sidebar && mainContent) {
+    manuButton.addEventListener("click", () => {
+        sidebar.classList.toggle("active");
+        mainContent.classList.toggle("expanded");
+    });
 }
-const searchBar = document.getElementById("search-bar");
-const searchIcon = document.getElementById("search-icon");
-searchIcon.addEventListener("click", () => {
-    searchBar.classList.toggle("active");
-    if (searchBar.classList.contains("active")) {
-        searchBar.focus();
+;
+// --- Theme toggle ---
+const theme = document.getElementById("theme-toggle");
+if (theme) {
+    theme.addEventListener("click", () => {
+        document.body.classList.toggle("dark-mode");
+        localStorage.setItem("theme", document.body.classList.contains("dark-mode") ? "dark" : "light");
+    });
+    if (localStorage.getItem("theme") === "dark") {
+        document.body.classList.add("dark-mode");
     }
-});
-// Add Task buttons → go to form
-document.getElementById("add-task-btn").addEventListener("click", () => {
-    window.location.href = "add-task.html";
-});
-document.getElementById("add-task-main").addEventListener("click", () => {
-    window.location.href = "add-task.html";
-});
+}
+// --- Add task buttons ---
+const addTaskBtn = document.getElementById("add-task-btn");
+if (addTaskBtn) {
+    addTaskBtn.addEventListener("click", () => {
+        window.location.href = "add-task.html";
+    });
+}
+;
+const addTaskMain = document.getElementById("add-task-main");
+if (addTaskMain) {
+    addTaskMain.addEventListener("click", () => {
+        window.location.href = "add-task.html";
+    });
+}
+;
 // --- Elements ---
 const tasksList = document.getElementById("tasks-list");
 const noTaskMsg = document.getElementById("no-task-msg");
-// Sidebar filters
 const allTasks = document.getElementById("all-tasks");
 const todayTasks = document.getElementById("today-tasks");
 const completedTasks = document.getElementById("completed-tasks");
 const pendingTasks = document.getElementById("pending-tasks");
 const trashbin = document.getElementById("trash");
 const filterSelect = document.getElementById("filter-tasks");
-// const searchBar = document.getElementById("search-bar");
 const sectionTitle = document.getElementById("section-title");
+const searchBar = document.getElementById("search-bar");
+const searchIcon = document.getElementById("search-icon");
 // Keep current filter state
 let currentFilter = "all";
-// --- Load tasks with filter + search + priority ---
+function getData(key) {
+    const item = localStorage.getItem(key);
+    try {
+        return item ? JSON.parse(item) : [];
+    }
+    catch (_a) {
+        return [];
+    }
+}
+function saveData(key, data) {
+    localStorage.setItem(key, JSON.stringify(data));
+}
+// --- Load tasks ---
 function tasksLoading(filter = currentFilter) {
     currentFilter = filter;
-    let tasks = JSON.parse(localStorage.getItem("tasks")) || [];
-    let trash = JSON.parse(localStorage.getItem("trash")) || [];
+    let tasks = getData("tasks");
+    let trash = getData("trash");
     let filteredTasks = [];
-    if (filter === "all") {
-        filteredTasks = tasks;
-        sectionTitle.textContent = "All Tasks";
+    // Filter selection
+    if (!sectionTitle)
+        return;
+    switch (filter) {
+        case "all":
+            filteredTasks = tasks;
+            sectionTitle.textContent = "All Tasks";
+            break;
+        case "today":
+            const today = new Date().toISOString().split("T")[0];
+            filteredTasks = tasks.filter((t) => t.dueDate === today);
+            sectionTitle.textContent = "Today's Tasks";
+            break;
+        case "completed":
+            filteredTasks = tasks.filter((t) => t.completed);
+            sectionTitle.textContent = "Completed Tasks";
+            break;
+        case "pending":
+            filteredTasks = tasks.filter((t) => !t.completed);
+            sectionTitle.textContent = "Pending Tasks";
+            break;
+        case "trash":
+            filteredTasks = trash;
+            sectionTitle.textContent = "Trash";
+            break;
     }
-    else if (filter === "today") {
-        const today = new Date().toISOString().split("T")[0];
-        filteredTasks = tasks.filter(t => t.dueDate === today);
-        sectionTitle.textContent = "Today's Tasks";
+    // Priority filter
+    if (filterSelect) {
+        const priorityFilter = filterSelect.value;
+        if (priorityFilter !== "all" && filter !== "trash") {
+            filteredTasks = filteredTasks.filter((t) => t.priority === priorityFilter);
+        }
     }
-    else if (filter === "completed") {
-        filteredTasks = tasks.filter(t => t.completed);
-        sectionTitle.textContent = "Completed Tasks";
-    }
-    else if (filter === "pending") {
-        filteredTasks = tasks.filter(t => !t.completed);
-        sectionTitle.textContent = "Pending Tasks";
-    }
-    else if (filter === "trash") {
-        filteredTasks = trash;
-        sectionTitle.textContent = "Trash";
-    }
-    // Apply priority filter
-    const priorityFilter = filterSelect.value;
-    if (priorityFilter !== "all" && filter !== "trash") {
-        filteredTasks = filteredTasks.filter(t => t.priority === priorityFilter);
-    }
-    // Apply search filter
-    const search = searchBar.value.toLowerCase();
-    if (search) {
-        filteredTasks = filteredTasks.filter(t => (t.title && t.title.toLowerCase().includes(search)) ||
-            (t.description && t.description.toLowerCase().includes(search)));
+    // Search filter
+    if (searchBar) {
+        const search = searchBar.value.toLowerCase();
+        if (search) {
+            filteredTasks = filteredTasks.filter((t) => (t.title && t.title.toLowerCase().includes(search)) ||
+                (t.description && t.description.toLowerCase().includes(search)));
+        }
     }
     // Clear list
-    tasksList.innerHTML = "";
-    if (filteredTasks.length === 0) {
-        noTaskMsg.style.display = "block";
-        return;
-    }
-    else {
-        noTaskMsg.style.display = "none";
-    }
-    // Render tasks
-    filteredTasks.forEach(task => {
-        const div = document.createElement("div");
-        div.classList.add("task-item");
-        div.setAttribute("data-id", task.id);
-        div.innerHTML = `
+    if (tasksList) {
+        tasksList.innerHTML = "";
+        if (filteredTasks.length === 0 && noTaskMsg) {
+            noTaskMsg.style.display = "block";
+            return;
+        }
+        else {
+            if (noTaskMsg)
+                noTaskMsg.style.display = "none";
+        }
+        // Render tasks
+        filteredTasks.forEach((task) => {
+            var _a, _b, _c, _d, _e, _f;
+            const div = document.createElement("div");
+            div.classList.add("task-item");
+            div.setAttribute("data-id", task.id);
+            div.innerHTML = `
       <div class="task-info">
         <h3 class="task-title ${task.completed ? "completed" : ""}">
           ${task.title}
@@ -105,93 +134,86 @@ function tasksLoading(filter = currentFilter) {
         <small>Due: ${task.dueDate || "No date"} | Priority: ${task.priority}</small>
       </div>
       <div class="task-menu">
-        <button class="menu-btn">⋮</button>
+        <button class="menu-btn">...</button>
         <div class="menu-dropdown hidden">
           ${filter !== "trash"
-            ? `
+                ? `
             <button class="star-btn">${task.starred ? "Unstar" : "Star"}</button>
             <button class="edit-btn">Rename</button>
             <button class="complete-btn">${task.completed ? "Undo" : "Complete"}</button>
             <button class="delete-btn">Delete</button>
           `
-            : `
+                : `
             <button class="restore-btn">Restore</button>
             <button class="permanent-delete-btn">Delete Permanently</button>
           `}
         </div>
       </div>
     `;
-        const menuBtn = div.querySelector(".menu-btn");
-        const dropdown = div.querySelector(".menu-dropdown");
-        menuBtn.addEventListener("click", (e) => {
-            e.stopPropagation();
-            document.querySelectorAll(".menu-dropdown").forEach(menu => {
-                if (menu !== dropdown)
-                    menu.classList.add("hidden");
-            });
-            dropdown.classList.toggle("hidden");
+            const menuBtn = div.querySelector(".menu-btn");
+            const dropdown = div.querySelector(".menu-dropdown");
+            if (menuBtn && dropdown) {
+                menuBtn.addEventListener("click", (e) => {
+                    e.stopPropagation();
+                    document.querySelectorAll(".menu-dropdown").forEach((menu) => {
+                        if (menu !== dropdown)
+                            menu.classList.add("hidden");
+                    });
+                    dropdown.classList.toggle("hidden");
+                });
+                document.addEventListener("click", () => dropdown.classList.add("hidden"));
+                if (filter !== "trash") {
+                    (_a = dropdown.querySelector(".delete-btn")) === null || _a === void 0 ? void 0 : _a.addEventListener("click", () => deleteTask(task.id));
+                    (_b = dropdown.querySelector(".edit-btn")) === null || _b === void 0 ? void 0 : _b.addEventListener("click", () => renameTask(task.id));
+                    (_c = dropdown.querySelector(".complete-btn")) === null || _c === void 0 ? void 0 : _c.addEventListener("click", () => toggleComplete(task.id));
+                    (_d = dropdown.querySelector(".star-btn")) === null || _d === void 0 ? void 0 : _d.addEventListener("click", () => toggleStar(task.id));
+                }
+                else {
+                    (_e = dropdown.querySelector(".restore-btn")) === null || _e === void 0 ? void 0 : _e.addEventListener("click", () => restoreTask(task.id));
+                    (_f = dropdown.querySelector(".permanent-delete-btn")) === null || _f === void 0 ? void 0 : _f.addEventListener("click", () => permanentDelete(task.id));
+                }
+            }
+            tasksList.appendChild(div);
         });
-        document.addEventListener("click", () => dropdown.classList.add("hidden"));
-        if (filter !== "trash") {
-            dropdown
-                .querySelector(".delete-btn")
-                .addEventListener("click", () => deleteTask(task.id));
-            dropdown
-                .querySelector(".edit-btn")
-                .addEventListener("click", () => renameTask(task.id));
-            dropdown
-                .querySelector(".complete-btn")
-                .addEventListener("click", () => toggleComplete(task.id));
-            dropdown
-                .querySelector(".star-btn")
-                .addEventListener("click", () => toggleStar(task.id));
-        }
-        else {
-            dropdown
-                .querySelector(".restore-btn")
-                .addEventListener("click", () => restoreTask(task.id));
-            dropdown
-                .querySelector(".permanent-delete-btn")
-                .addEventListener("click", () => permanentDelete(task.id));
-        }
-        tasksList.appendChild(div);
-    });
+    }
     updateCounts();
 }
 // --- Task Actions ---
 function deleteTask(id) {
-    let tasks = JSON.parse(localStorage.getItem("tasks")) || []; //get all tasks
-    let trash = JSON.parse(localStorage.getItem("trash")) || [];
-    const task = tasks.find(t => t.id === id);
+    let tasks = getData("tasks");
+    let trash = getData("trash");
+    const task = tasks.find((t) => t.id === id);
     if (task) {
         trash.push(task);
-        tasks = tasks.filter(t => t.id !== id);
+        tasks = tasks.filter((t) => t.id !== id);
     }
     localStorage.setItem("tasks", JSON.stringify(tasks));
     localStorage.setItem("trash", JSON.stringify(trash));
     tasksLoading(currentFilter);
 }
 function restoreTask(id) {
-    let tasks = JSON.parse(localStorage.getItem("tasks")) || [];
-    let trash = JSON.parse(localStorage.getItem("trash")) || [];
-    const task = trash.find(t => t.id === id);
+    let tasks = getData("tasks");
+    let trash = getData("trash");
+    const task = trash.find((t) => t.id === id);
     if (task) {
         tasks.push(task);
-        trash = trash.filter(t => t.id !== id);
+        trash = trash.filter((t) => t.id !== id);
     }
     localStorage.setItem("tasks", JSON.stringify(tasks));
     localStorage.setItem("trash", JSON.stringify(trash));
     tasksLoading("trash");
 }
 function permanentDelete(id) {
-    let trash = JSON.parse(localStorage.getItem("trash")) || [];
-    trash = trash.filter(t => t.id !== id);
+    let trash = getData("trash");
+    trash = trash.filter((t) => t.id !== id);
     localStorage.setItem("trash", JSON.stringify(trash));
     tasksLoading("trash");
 }
 function renameTask(id) {
-    let tasks = JSON.parse(localStorage.getItem("tasks")) || [];
-    const task = tasks.find(t => t.id === id);
+    let tasks = getData("tasks");
+    const task = tasks.find((t) => t.id === id);
+    if (!task)
+        return;
     const newTitle = prompt("Enter new title:", task.title);
     if (newTitle) {
         task.title = newTitle.trim();
@@ -200,39 +222,61 @@ function renameTask(id) {
     }
 }
 function toggleComplete(id) {
-    let tasks = JSON.parse(localStorage.getItem("tasks")) || [];
-    const task = tasks.find(t => t.id === id);
-    task.completed = !task.completed;
+    let tasks = getData("tasks");
+    const task = tasks.find((t) => t.id === id);
+    if (task)
+        task.completed = !task.completed;
     localStorage.setItem("tasks", JSON.stringify(tasks));
     tasksLoading(currentFilter);
 }
 function toggleStar(id) {
-    let tasks = JSON.parse(localStorage.getItem("tasks")) || [];
-    const task = tasks.find(t => t.id === id);
-    task.starred = !task.starred;
+    let tasks = getData("tasks");
+    const task = tasks.find((t) => t.id === id);
+    if (task)
+        task.starred = !task.starred;
     localStorage.setItem("tasks", JSON.stringify(tasks));
     tasksLoading(currentFilter);
 }
 // --- Update counts ---
 function updateCounts() {
-    let tasks = JSON.parse(localStorage.getItem("tasks")) || [];
-    let trash = JSON.parse(localStorage.getItem("trash")) || [];
-    document.querySelector("#all-tasks .count").textContent = tasks.length;
-    document.querySelector("#today-tasks .count").textContent = tasks.filter((t) => t.dueDate === new Date().toISOString().split("T")[0]).length;
-    document.querySelector("#completed-tasks .count").textContent = tasks.filter((t) => t.completed).length;
-    document.querySelector("#pending-tasks .count").textContent = tasks.filter((t) => !t.completed).length;
-    document.querySelector("#trash .count").textContent = trash.length;
+    let tasks = getData("tasks");
+    let trash = getData("trash");
+    const allCount = document.querySelector("#all-tasks .count");
+    if (allCount)
+        allCount.textContent = tasks.length.toString();
+    const todayCount = document.querySelector("#today-tasks .count");
+    if (todayCount)
+        todayCount.textContent = tasks.filter((t) => t.dueDate === new Date().toISOString().split("T")[0]).length.toString();
+    const completedCount = document.querySelector("#completed-tasks .count");
+    if (completedCount)
+        completedCount.textContent = tasks.filter((t) => t.completed).length.toString();
+    const pendingCount = document.querySelector("#pending-tasks .count");
+    if (pendingCount)
+        pendingCount.textContent = tasks.filter((t) => !t.completed).length.toString();
+    const trashCount = document.querySelector("#trash .count");
+    if (trashCount)
+        trashCount.textContent = trash.length.toString();
 }
 // --- Sidebar filters ---
-allTasks.addEventListener("click", () => tasksLoading("all"));
-todayTasks.addEventListener("click", () => tasksLoading("today"));
-completedTasks.addEventListener("click", () => tasksLoading("completed"));
-pendingTasks.addEventListener("click", () => tasksLoading("pending"));
-trashbin.addEventListener("click", () => tasksLoading("trash"));
+allTasks === null || allTasks === void 0 ? void 0 : allTasks.addEventListener("click", () => tasksLoading("all"));
+todayTasks === null || todayTasks === void 0 ? void 0 : todayTasks.addEventListener("click", () => tasksLoading("today"));
+completedTasks === null || completedTasks === void 0 ? void 0 : completedTasks.addEventListener("click", () => tasksLoading("completed"));
+pendingTasks === null || pendingTasks === void 0 ? void 0 : pendingTasks.addEventListener("click", () => tasksLoading("pending"));
+trashbin === null || trashbin === void 0 ? void 0 : trashbin.addEventListener("click", () => tasksLoading("trash"));
 // --- Filter dropdown ---
-filterSelect.addEventListener("change", () => tasksLoading(currentFilter));
-// --- Search bar ---
-searchBar.addEventListener("input", () => tasksLoading(currentFilter));
-// On page load
+filterSelect === null || filterSelect === void 0 ? void 0 : filterSelect.addEventListener("change", () => tasksLoading(currentFilter));
+// --- Search bar toggle ---
+searchIcon === null || searchIcon === void 0 ? void 0 : searchIcon.addEventListener("click", () => {
+    if (searchBar) {
+        searchBar.classList.toggle("active");
+        if (searchBar.classList.contains("active")) {
+            searchBar.focus();
+        }
+    }
+});
+// --- Search bar input ---
+searchBar === null || searchBar === void 0 ? void 0 : searchBar.addEventListener("input", () => tasksLoading(currentFilter));
+// --- On page load ---
 tasksLoading("all");
+export {};
 //# sourceMappingURL=script.js.map
