@@ -92,28 +92,31 @@ function tasksLoading(filter: string = currentFilter): void {
   let filteredTasks: Task[] = [];
 
   // Filter selection
-  if (filter === "all"&& sectionTitle) {
+  if(!sectionTitle)return;
+ switch(filter){
+  case "all":
     filteredTasks = tasks;
-    sectionTitle.textContent = "All Tasks";
-  } 
-  else if (filter === "today" && sectionTitle) {
-    const today = new Date().toISOString().split("T")[0];
-    filteredTasks = tasks.filter((t) => t.dueDate === today);
-    sectionTitle.textContent = "Today's Tasks";
-  } 
-  else if (filter === "completed" && sectionTitle) {
-    filteredTasks = tasks.filter((t) => t.completed);
-    sectionTitle.textContent = "Completed Tasks";
-  } 
-  else if (filter === "pending" && sectionTitle) {
-    filteredTasks = tasks.filter((t) => !t.completed);
-    sectionTitle.textContent = "Pending Tasks";
-  } 
-  else if (filter === "trash" && sectionTitle) {
-    filteredTasks = trash;
-    sectionTitle.textContent = "Trash";
-  }
-
+      sectionTitle.textContent = "All Tasks";
+      break;
+    case "today":
+      const today = new Date().toISOString().split("T")[0];
+      filteredTasks = tasks.filter((t) => t.dueDate === today);
+      sectionTitle.textContent = "Today's Tasks";
+      break;
+    case "completed":
+      filteredTasks = tasks.filter((t) => t.completed);
+      sectionTitle.textContent = "Completed Tasks";
+      break;
+    case "pending":
+      filteredTasks = tasks.filter((t) => !t.completed);
+      sectionTitle.textContent = "Pending Tasks";
+      break;
+    case "trash":
+      filteredTasks = trash;
+      sectionTitle.textContent = "Trash";
+      break;
+ }
+  
   // Priority filter
   if(filterSelect){
   const priorityFilter = filterSelect.value;
@@ -224,13 +227,18 @@ function deleteTask(id: string): void {
   let trash:Task[] = getData("trash");
 
   const task = tasks.find((t) => t.id === id);
+
+  if(!task)
+    return;
+
   if (task) {
     trash.push(task);
     tasks = tasks.filter((t) => t.id !== id);
   }
 
-  localStorage.setItem("tasks", JSON.stringify(tasks));
-  localStorage.setItem("trash", JSON.stringify(trash));
+  saveData("tasks",tasks)
+  saveData("trash",trash)
+
 
   tasksLoading(currentFilter);
 }
@@ -240,13 +248,19 @@ function restoreTask(id: string): void {
   let trash: Task[] = getData("trash");
 
   const task = trash.find((t) => t.id === id);
+
+  if(!task){
+    return;
+  }
   if (task) {
     tasks.push(task);
     trash = trash.filter((t) => t.id !== id);
   }
 
-  localStorage.setItem("tasks", JSON.stringify(tasks));
-  localStorage.setItem("trash", JSON.stringify(trash));
+
+  saveData("tasks",tasks)
+  saveData("trash",trash)
+
 
   tasksLoading("trash");
 }
@@ -254,37 +268,51 @@ function restoreTask(id: string): void {
 function permanentDelete(id: string): void {
   let trash: Task[] = getData("trash")
   trash = trash.filter((t) => t.id !== id);
-  localStorage.setItem("trash", JSON.stringify(trash));
+
+  saveData("trash",trash)
+
   tasksLoading("trash");
 }
 
 function renameTask(id: string): void {
   let tasks: Task[] = getData("tasks")
   const task = tasks.find((t) => t.id === id);
-  if(!task) return
+
+
+  if(!task) return;
   const newTitle = prompt("Enter new title:", task.title);
-  if (newTitle) {
+  if (!newTitle) {
+    return;
+   }
     task.title = newTitle.trim();
-    localStorage.setItem("tasks", JSON.stringify(tasks));
+    saveData("tasks",tasks)
     tasksLoading(currentFilter);
-  }
+
 }
 
 function toggleComplete(id: string):void {
   let tasks: Task[] = getData("tasks")
   const task = tasks.find((t) => t.id === id);
-  if(task)
+
+
+  if(!task)
+    return;
   task.completed = !task.completed;
-  localStorage.setItem("tasks", JSON.stringify(tasks));
+  saveData("tasks",tasks)
+
   tasksLoading(currentFilter);
 }
 
 function toggleStar(id: string): void {
   let tasks: Task[] =getData("tasks")
   const task = tasks.find((t) => t.id === id);
-  if(task)
+
+
+  if(!task)
+    return;
   task.starred = !task.starred;
-  localStorage.setItem("tasks", JSON.stringify(tasks));
+  saveData("tasks",tasks)
+
   tasksLoading(currentFilter);
 }
 
