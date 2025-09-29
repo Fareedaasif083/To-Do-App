@@ -227,6 +227,7 @@ function deleteTask(id: string): void {
   let trash:Task[] = getData("trash");
 
   const task = tasks.find((t) => t.id === id);
+
   if(!task)
     return;
 
@@ -235,9 +236,9 @@ function deleteTask(id: string): void {
     tasks = tasks.filter((t) => t.id !== id);
   }
 
-
   saveData("tasks",tasks)
   saveData("trash",trash)
+
 
   tasksLoading(currentFilter);
 }
@@ -247,6 +248,7 @@ function restoreTask(id: string): void {
   let trash: Task[] = getData("trash");
 
   const task = trash.find((t) => t.id === id);
+
   if(!task){
     return;
   }
@@ -255,8 +257,10 @@ function restoreTask(id: string): void {
     trash = trash.filter((t) => t.id !== id);
   }
 
+
   saveData("tasks",tasks)
   saveData("trash",trash)
+
 
   tasksLoading("trash");
 }
@@ -264,13 +268,16 @@ function restoreTask(id: string): void {
 function permanentDelete(id: string): void {
   let trash: Task[] = getData("trash")
   trash = trash.filter((t) => t.id !== id);
+
   saveData("trash",trash)
+
   tasksLoading("trash");
 }
 
 function renameTask(id: string): void {
   let tasks: Task[] = getData("tasks")
   const task = tasks.find((t) => t.id === id);
+
 
   if(!task) return;
   const newTitle = prompt("Enter new title:", task.title);
@@ -280,16 +287,19 @@ function renameTask(id: string): void {
     task.title = newTitle.trim();
     saveData("tasks",tasks)
     tasksLoading(currentFilter);
+
 }
 
 function toggleComplete(id: string):void {
   let tasks: Task[] = getData("tasks")
   const task = tasks.find((t) => t.id === id);
 
+
   if(!task)
     return;
   task.completed = !task.completed;
   saveData("tasks",tasks)
+
   tasksLoading(currentFilter);
 }
 
@@ -297,10 +307,12 @@ function toggleStar(id: string): void {
   let tasks: Task[] =getData("tasks")
   const task = tasks.find((t) => t.id === id);
 
+
   if(!task)
     return;
   task.starred = !task.starred;
   saveData("tasks",tasks)
+
   tasksLoading(currentFilter);
 }
 

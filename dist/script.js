@@ -1,3 +1,4 @@
+
 // --- Sidebar toggle ---
 const manuButton = document.getElementById("menu-toggle");
 const sidebar = document.getElementById("sidebar");
@@ -38,12 +39,14 @@ if (addTaskMain) {
 // --- Elements ---
 const tasksList = document.getElementById("tasks-list");
 const noTaskMsg = document.getElementById("no-task-msg");
+
 const allTasks = document.getElementById("all-tasks");
 const todayTasks = document.getElementById("today-tasks");
 const completedTasks = document.getElementById("completed-tasks");
 const pendingTasks = document.getElementById("pending-tasks");
 const trashbin = document.getElementById("trash");
 const filterSelect = document.getElementById("filter-tasks");
+
 const sectionTitle = document.getElementById("section-title");
 const searchBar = document.getElementById("search-bar");
 const searchIcon = document.getElementById("search-icon");
@@ -126,6 +129,7 @@ function tasksLoading(filter = currentFilter) {
             div.classList.add("task-item");
             div.setAttribute("data-id", task.id);
             div.innerHTML = `
+
       <div class="task-info">
         <h3 class="task-title ${task.completed ? "completed" : ""}">
           ${task.title}
@@ -134,6 +138,7 @@ function tasksLoading(filter = currentFilter) {
         <small>Due: ${task.dueDate || "No date"} | Priority: ${task.priority}</small>
       </div>
       <div class="task-menu">
+
         <button class="menu-btn">...</button>
         <div class="menu-dropdown hidden">
           ${filter !== "trash"
@@ -143,7 +148,9 @@ function tasksLoading(filter = currentFilter) {
             <button class="complete-btn">${task.completed ? "Undo" : "Complete"}</button>
             <button class="delete-btn">Delete</button>
           `
+
                 : `
+
             <button class="restore-btn">Restore</button>
             <button class="permanent-delete-btn">Delete Permanently</button>
           `}
@@ -176,10 +183,12 @@ function tasksLoading(filter = currentFilter) {
             tasksList.appendChild(div);
         });
     }
+
     updateCounts();
 }
 // --- Task Actions ---
 function deleteTask(id) {
+
     let tasks = getData("tasks");
     let trash = getData("trash");
     const task = tasks.find((t) => t.id === id);
@@ -198,18 +207,21 @@ function restoreTask(id) {
     if (task) {
         tasks.push(task);
         trash = trash.filter((t) => t.id !== id);
+
     }
     localStorage.setItem("tasks", JSON.stringify(tasks));
     localStorage.setItem("trash", JSON.stringify(trash));
     tasksLoading("trash");
 }
 function permanentDelete(id) {
+
     let trash = getData("trash");
     trash = trash.filter((t) => t.id !== id);
     localStorage.setItem("trash", JSON.stringify(trash));
     tasksLoading("trash");
 }
 function renameTask(id) {
+
     let tasks = getData("tasks");
     const task = tasks.find((t) => t.id === id);
     if (!task)
@@ -222,23 +234,28 @@ function renameTask(id) {
     }
 }
 function toggleComplete(id) {
+
     let tasks = getData("tasks");
     const task = tasks.find((t) => t.id === id);
     if (task)
         task.completed = !task.completed;
+
     localStorage.setItem("tasks", JSON.stringify(tasks));
     tasksLoading(currentFilter);
 }
 function toggleStar(id) {
+
     let tasks = getData("tasks");
     const task = tasks.find((t) => t.id === id);
     if (task)
         task.starred = !task.starred;
+
     localStorage.setItem("tasks", JSON.stringify(tasks));
     tasksLoading(currentFilter);
 }
 // --- Update counts ---
 function updateCounts() {
+
     let tasks = getData("tasks");
     let trash = getData("trash");
     const allCount = document.querySelector("#all-tasks .count");
@@ -279,4 +296,5 @@ searchBar === null || searchBar === void 0 ? void 0 : searchBar.addEventListener
 // --- On page load ---
 tasksLoading("all");
 export {};
+
 //# sourceMappingURL=script.js.map

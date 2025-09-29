@@ -23,9 +23,12 @@ module.exports = {
         hover2: {
           light: "rgb(53,95,143)",
           dark: "#3a7bd5"
+
         }
       }
     },
   },
   plugins: [],
+
 };
+

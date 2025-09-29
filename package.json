@@ -2,10 +2,14 @@
   "name": "to-do-app",
   "version": "1.0.0",
   "description": "",
-  "keywords": [],
-  "homepage": "https://github.com/Fareedaasif083/To-Do-App#readme",
-  "bugs": {
-    "url": "https://github.com/Fareedaasif083/To-Do-App/issues"
+
+  "main": "add-task.js",
+  "scripts": {
+    "build": "tsc",
+    "watch": "tsc -w",
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "build:css": "npx tailwindcss -i ./src/input.css -o ./dist/output.css --watch"
+
   },
   "repository": {
     "type": "git",
@@ -21,9 +25,13 @@
     "test": "echo \"Error: no test specified\" && exit 1",
     "build:css": "tailwindcss -i ./src/input.css -o ./dist/output.css --watch"
   },
+
+  "homepage": "https://github.com/Fareedaasif083/To-Do-App#readme",
   "devDependencies": {
     "autoprefixer": "^10.4.21",
     "postcss": "^8.5.6",
-    "tailwindcss": "^3.4.17"
+    "tailwindcss": "^3.4.17",
+    "typescript": "^5.9.2"
+
   }
 }
