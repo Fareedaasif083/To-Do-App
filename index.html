@@ -4,24 +4,24 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>www.To-Do.com</title>
-    <link rel="stylesheet" href="style.css" />
+    <link rel="stylesheet" href="dist/output.css" />
     <link rel="stylesheet" href="responsive.css" />
   </head>
-  <body>
-    <header id="app-header" class="header">
-      <div class="header-left">
-        <button id="menu-toggle">☰</button>
-        <h1 id="app-title">My To-Do</h1>
+  <body >
+    <header id="app-header" class="flex item-center justify-between text-text-light bg-bg-light px-4 py-3 sticky z-1000 top-0 ">
+      <div class="flex item-center gap-2">
+        <button id="menu-toggle" class="text-text-light border-none cursor-pointer hover:scale-110 transition-transform">☰</button>
+        <h1 id="app-title" class="mt-1 font-bold text-xl">My To-Do</h1>
       </div>
 
-      <div class="header-middle">
-        <input type="text" id="search-bar" placeholder="Search tasks..." />
+      <div class="flex flex-1 justify-center">
+        <input type="text" id="search-bar" placeholder="Search tasks..." class="w-3/5 px-3 py-1 rounded-full  mt-1 text-sm border border-text2-light" />
         
       </div>
 
-      <div class="header-right">
-        <button id="search-icon">🔍</button>
-        <button id="theme-toggle">Dark / Light </button>
+      <div class="flex item-center">
+        <button id="search-icon" class="hidden text-xl">🔍</button>
+        <button id="theme-toggle" class="text-xl cursor-pointer font-bold transition-transform duration-300ms ease hover:translate-x-1">Dark / Light </button>
 
       </div>
     </header>
