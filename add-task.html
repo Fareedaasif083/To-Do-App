@@ -4,53 +4,55 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>www.To-Do.com</title>
-    <link rel="stylesheet" href="style.css" />
+    <link rel="stylesheet" href="dist/output.css" />
     <link rel="stylesheet" href="responsive.css" />
   </head>
   <body>
-    <header id="app-header" class="header">
-      <div class="header-left">
-        <button id="menu-toggle">☰</button>
-        <h1 id="app-title">My To-Do</h1>
+    <header id="app-header" class="flex item-center justify-between text-text-light bg-bg-light px-4 py-3 sticky z-1000 top-0 ">
+      <div class="flex item-center gap-2">
+        <button id="menu-toggle" class="text-text-light border-none cursor-pointer hover:scale-110 transition-transform">☰</button>
+        <h1 id="app-title" class="mt-1 font-bold text-xl">My To-Do</h1>
       </div>
 
-      <div class="header-middle">
-        <input type="text" id="search-bar" placeholder="Search tasks..." />
+      <div class="flex flex-1 justify-center">
+        <input type="text" id="search-bar" placeholder="Search tasks..." class="w-3/5 px-3 py-1 rounded-full  mt-1 text-sm border border-text2-light" />
+        
       </div>
 
-      <div class="header-right">
-        <button id="theme-toggle">Dark / Light</button>
+      <div class="flex item-center">
+        <button id="search-icon" class="hidden text-xl">🔍</button>
+        <button id="theme-toggle" class="text-xl cursor-pointer font-bold transition-transform duration-300ms ease hover:translate-x-1">Dark / Light </button>
+
       </div>
     </header>
 
-    <div class="form-container">
-      <h2>Add New Task</h2>
+
+    <div class="max-w-xl mx-auto mt-8 rounded-lg shadow-md p-6">
+      <h2 class="text-center text-text-light font-bold text-2xl">Add New Task</h2>
 
       <form id="add-task-form">
-        <div class="form-row">
-          <label for="title"
-            >Title <small style="color: #888">(required)</small></label
-          >
-          <input id="title" name="title" type="text" required />
+        <div class="font-bold ">
+          <label for="title  " class="ml-2">Title <small style="color: #888">(required)</small></label>
+          <input id="title" name="title" type="text" required class="block rounded-md border border-text2-light ml-2 mr-10 mt-[10px] mb-0 pb-0 w-full"/>
         </div>
 
-        <div class="form-row">
-          <label for="description">Description</label>
-          <textarea id="description" name="description"></textarea>
+        <div class="font-bold ">
+          <label for="description" class="ml-2 mt-0 pt-0">Description</label>
+          <textarea id="description" name="description" class="w-full rounded-md border border-text2-light px-3 ml-2 py-2 font-medium"></textarea>
         </div>
 
-        <div class="form-row" style="display: flex; gap: 10px">
+        <div class="flex gap-4 font-bold">
           <div style="flex: 1">
-            <label for="dueDate">Due date</label>
-            <div class="date-options">
-              <button type="button" id="todayBtn">Today</button>
-              <button type="button" id="tomorrowBtn">Tomorrow</button>
-              <input id="dueDate" name="dueDate" type="date" />
+            <label for="dueDate" class="ml-2 mt-0 pt-0">Due date</label>
+            <div class="flex gap-4 items-center ml-2 ">
+              <button type="button" id="todayBtn" class="px-3 py-1 border rounded-md border-text2-light hover:bg-hover-light hover:text-white transition-all duration-150 ease active:bg-hover2-light active:text-white  ">Today</button>
+              <button type="button" id="tomorrowBtn"class="px-3 py-1 border rounded-md border-text2-light hover:bg-hover-light hover:text-white transition-all duration-150 ease active:bg-hover2-light active:text-white">Tomorrow</button>
+              <input id="dueDate" name="dueD" type="date" class="px-3 py-1 border rounded-md border-text2-light cursor-pointer"/>
             </div>
           </div>
           <div style="width: 160px">
-            <label for="priority">Priority</label>
-            <select id="priority" name="priority">
+            <label for="priority"class="mb-1">Priority</label>
+            <select id="priority" name="priority" class="rounded-md border border-text2-light px-3 py-1.5  ">
               <option value="low">Low</option>
               <option value="medium" selected>Medium</option>
               <option value="high">High</option>
@@ -58,9 +60,9 @@
           </div>
         </div>
 
-        <div class="form-actions">
-          <button class="btn-primary" type="submit">Save Task</button>
-          <button type="button" id="cancel-btn" class="btn-secondary">
+        <div class="flex justify-between ">
+          <button  type="submit" class="cursor-pointer bg-text-light  text-white px-5 py-2 mt-4 rounded-lg hover:bg-hover2-light">Save Task</button>
+          <button type="button" id="cancel-btn" class="cursor-pointer px-5 py-2 mt-3 rounded-lg border border-text2-light">
             Cancel
           </button>
         </div>
