@@ -4,76 +4,76 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>www.To-Do.com</title>
-    <link rel="stylesheet" href="style.css" />
+    <link rel="stylesheet" href="dist/output.css" />
     <link rel="stylesheet" href="responsive.css" />
   </head>
-  <body>
-    <header id="app-header" class="header">
-      <div class="header-left">
-        <button id="menu-toggle">☰</button>
-        <h1 id="app-title">My To-Do</h1>
+  <body >
+    <header id="app-header" class="flex item-center justify-between text-text-light bg-bg-light px-4 py-3 sticky z-1000 top-0 ">
+      <div class="flex item-center gap-2">
+        <button id="menu-toggle" class="text-text-light border-none cursor-pointer hover:scale-110 transition-transform">☰</button>
+        <h1 id="app-title" class="mt-1 font-bold text-xl">My To-Do</h1>
       </div>
 
-      <div class="header-middle">
-        <input type="text" id="search-bar" placeholder="Search tasks..." />
+      <div class="flex flex-1 justify-center">
+        <input type="text" id="search-bar" placeholder="Search tasks..." class="w-3/5 px-3 py-1 rounded-full  mt-1 text-sm border border-text2-light" />
         
       </div>
 
-      <div class="header-right">
-        <button id="search-icon">🔍</button>
-        <button id="theme-toggle">Dark / Light </button>
+      <div class="flex item-center">
+        <button id="search-icon" class="hidden text-xl">🔍</button>
+        <button id="theme-toggle" class="text-xl cursor-pointer font-bold transition-transform duration-300ms ease hover:translate-x-1">Dark / Light </button>
 
       </div>
     </header>
-    <aside id="sidebar" class="sidebar active">
-      <button id="add-task-btn" >+ Add Task</button>
-      <nav class="manu">
-        <ul>
-          <li>
+    <aside id="sidebar" class="top-0 h-screen w-56 bg-bg-light fixed border-r border-hover-light mt-[74px] p-1 transition-all left-0 active:z-50">
+      <button id="add-task-btn" class="block bg-text-light text-bg-light rounded-lg px-2 py-1 mx-6 hover:bg-hover2-light my-4">+ Add Task</button>
+      <nav class=" mt-6 ">
+        <ul class="list-none p-0 ml-3 mr-1">
+          <li class="mb-2">
             <a href="#" id="all-tasks"
-              > All Tasks<span class="count">0</span></a
+              class="decoration-none text-text2-light font-medium p-2 rounded-md block transition-transform duration-300ms ease-in hover:bg-hover-light hover:translate-x-1"> All Tasks<span class="text-bg-light rounded-full  bg-hover2-light px-2 py-0.5 text-xm font-bold ml-20">0</span></a
             >
           </li>
-          <li>
+          <li class="mb-2">
             <a href="#" id="today-tasks"
-              > Today<span class="count">0</span></a
+              class="decoration-none text-text2-light font-medium p-2 rounded-md block transition-transform duration-300ms ease-in hover:bg-hover-light hover:translate-x-1 "> Today<span class="text-bg-light rounded-full  bg-hover2-light px-2 py-0.5 text-xm font-bold ml-20 ">0</span></a
             >
           </li>
-          <li>
+          <li class="mb-2">
             <a href="#" id="completed-tasks"
-              > Completed<span class="count">0</span></a
+              class="decoration-none text-text2-light font-medium p-2 rounded-md block transition-transform duration-300ms ease-in hover:bg-hover-light hover:translate-x-1"> Completed<span class="text-bg-light rounded-full  bg-hover2-light px-2 py-0.5 text-xm font-bold ml-20">0</span></a
             >
-          </li>
+          </li class="mb-2">
           <li>
             <a href="#" id="pending-tasks"
-              > Pending<span class="count">0</span></a
+              class="decoration-none text-text2-light font-medium p-2 rounded-md block transition-transform duration-300ms ease-in hover:bg-hover-light hover:translate-x-1"> Pending<span class="text-bg-light rounded-full  bg-hover2-light px-2 py-0.5 text-xm font-bold ml-20">0</span></a
             >
           </li>
         </ul>
       </nav>
-      <div class="filter-section">
-        <h3>Filter</h3>
-        <select id="filter-tasks">
+      <div class="mt-4 px-2">
+        <h3 class="ml-3 mb-2 text-text2-light font-medium">Filter</h3>
+        <select id="filter-tasks" class=" w-[90%] p-[7px] rounded-md border-text2-light text-xm  ml-2 focus:border-text-light  ">
           <option value="all">All</option>
           <option value="high">High Priority</option>
           <option value="medium">Medium Priority</option>
           <option value="low">Low Priority</option>
         </select>
       </div>
-      <div class="trash-bin">
-        <a href="#" id="trash"> 🗑️ Trash <span class="count">0</span> </a>
+      <div class="p-[10px] mt-[100px]">
+        <a href="#" id="trash" class="text-text2-light font-medium p-2 rounded-md block transition-transform duration-300ms ease-in hover:bg-hover-light hover:translate-x-1 "> 🗑️ Trash <span class="text-bg-light rounded-full  bg-hover2-light px-2 py-0.5 text-xm font-bold ml-20">0</span> </a>
       </div>
     </aside>
-    <main id="main-content" class="main-content">
+    <main id="main-content" class="ml-[220px] p-[20px] bg-bg-light aria-expanded:ml-0 transition-all duration-300 ease">
       <!-- Section Header -->
-      <header class="main-header">
-        <h2 id="section-title">All Task</h2>
-        <button id="add-task-main">+ Add Task</button>
+      <header class="flex items-center justify-between mb-[15px]">
+        <h2 id="section-title" class="text-text2-light font-bold text-xl">All Task</h2>
+        <button id="add-task-main" class="block bg-text-light text-bg-light rounded-lg px-2 py-1 mx-6 hover:bg-hover2-light my-4">+ Add Task</button>
         
       </header>
 
-      <p class="no-task" id="no-task-msg">There is no task added yet</p>
-      <div id="tasks-list" class="tasks-list"></div>
+      <p class="text-center py-3 text-text2-light italic" id="no-task-msg">There is no task added yet</p>
+      <div id="tasks-list" class="flex justify-between items-start bg-text-light p-[10px] mb-3 rounded-md relative shadow-md"></div>
       
     </main>
     <script type="module"  src="dist/script.js"></script>
